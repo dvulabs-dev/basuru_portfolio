@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+@theme {
+    --color-dark: #0a192f;
+    --color-light: #cbd5e1;
+    --color-accent: #38bdf8;
+    --color-neon: #00e5ff;
+    --font-sans: 'Inter', sans-serif;
+    --image-hero-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+}
+
+body {
+    @apply bg-dark text-light font-sans;
+}
+
+.glass {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-lg;
+}
+
+.neon-text {
+    text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
+}
+
+.btn-primary {
+    @apply bg-neon text-dark font-bold py-3 px-8 rounded hover:bg-neon/80 transition duration-300 uppercase tracking-wider;
+}
