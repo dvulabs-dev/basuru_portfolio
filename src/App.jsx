@@ -8,6 +8,7 @@ import Certificates from './components/Certificates';
 import Courses from './components/Courses';
 import About from './components/About';
 import Countdown from './components/Countdown';
+import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -22,6 +23,7 @@ function Portfolio() {
       <Courses />
       <About />
       <Countdown />
+      <Contact />
       <Footer />
     </div>
   );

@@ -19,6 +19,16 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const cvStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'portfolio/cv',
+    allowedFormats: ['pdf'],
+    resource_type: 'raw', // needed for non-image files like PDF in some configurations, though auto is also fine. Let's use raw for raw document. Actually Cloudinary treats PDF as image for thumbnails, but "raw" is safer for just file downloading without processing.
+  },
+});
 
-export { cloudinary, upload };
+const upload = multer({ storage: storage });
+const cvUpload = multer({ storage: cvStorage });
+
+export { cloudinary, upload, cvUpload };

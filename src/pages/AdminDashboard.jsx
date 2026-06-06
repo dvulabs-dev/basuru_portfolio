@@ -42,6 +42,19 @@ const TABS = [
     linkLabel: 'Course Link',
     linkKey: 'courseLink',
   },
+  {
+    key: 'settings',
+    label: 'Settings',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    ),
+    color: 'from-slate-500 to-gray-600',
+    accent: '#64748b',
+    hasLink: false,
+  },
 ];
 
 const UploadIcon = () => (
@@ -108,6 +121,16 @@ const AdminDashboard = () => {
   };
 
   const fetchItems = async () => {
+    if (activeTab === 'settings') {
+      try {
+        const { data } = await axios.get('http://localhost:5000/api/settings');
+        setItems(data.cvUrl ? [data] : []); // Just to show count if needed, but we don't list settings
+      } catch {
+        showToast('Failed to fetch settings', 'error');
+      }
+      return;
+    }
+
     setFetching(true);
     try {
       const { data } = await axios.get(`http://localhost:5000/api/${activeTab}`);
@@ -122,6 +145,12 @@ const AdminDashboard = () => {
   const handleImageChange = (file) => {
     if (!file) return;
     setImage(file);
+    
+    if (file.type === 'application/pdf') {
+      setImagePreview('PDF_FILE'); // special identifier for PDF
+      return;
+    }
+
     const reader = new FileReader();
     reader.onloadend = () => setImagePreview(reader.result);
     reader.readAsDataURL(file);
@@ -131,13 +160,32 @@ const AdminDashboard = () => {
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) handleImageChange(file);
+    if (file && (file.type.startsWith('image/') || file.type === 'application/pdf')) handleImageChange(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!image) { showToast('Please select an image', 'error'); return; }
+    if (!image) { showToast(`Please select a ${activeTab === 'settings' ? 'PDF CV' : 'image'}`, 'error'); return; }
     setLoading(true);
+
+    if (activeTab === 'settings') {
+      try {
+        const uploadData = new FormData();
+        uploadData.append('cv', image);
+        await axios.post('http://localhost:5000/api/settings/cv', uploadData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        setImage(null);
+        setImagePreview(null);
+        fetchItems();
+        showToast('CV Updated successfully!');
+      } catch {
+        showToast('CV upload failed', 'error');
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
 
     let imageUrl = '';
     try {
@@ -172,6 +220,7 @@ const AdminDashboard = () => {
   };
 
   const handleDelete = async (id) => {
+    if (activeTab === 'settings') return; // no delete for CV in this UI yet
     try {
       await axios.delete(`http://localhost:5000/api/${activeTab}/${id}`);
       fetchItems();
@@ -264,19 +313,30 @@ const AdminDashboard = () => {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Image Upload */}
+                {/* File Upload (Image or CV) */}
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Cover Image *</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">
+                    {activeTab === 'settings' ? 'Upload PDF CV *' : 'Cover Image *'}
+                  </label>
                   {imagePreview ? (
-                    <div className="relative group rounded-2xl overflow-hidden border border-white/10">
-                      <img src={imagePreview} alt="Preview" className="w-full h-48 object-cover" />
+                    <div className="relative group rounded-2xl overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center h-48">
+                      {imagePreview === 'PDF_FILE' ? (
+                        <div className="text-center">
+                          <svg className="w-12 h-12 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                          </svg>
+                          <span className="text-sm font-medium">{image.name}</span>
+                        </div>
+                      ) : (
+                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                      )}
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <button
                           type="button"
                           onClick={() => { setImage(null); setImagePreview(null); }}
                           className="bg-red-500/80 hover:bg-red-500 text-white text-sm px-4 py-2 rounded-xl transition-colors"
                         >
-                          Remove Image
+                          Remove File
                         </button>
                       </div>
                     </div>
@@ -294,8 +354,8 @@ const AdminDashboard = () => {
                       <div className="text-slate-500 flex flex-col items-center gap-3">
                         <UploadIcon />
                         <div>
-                          <p className="text-sm font-medium text-slate-300">Drop image here</p>
-                          <p className="text-xs text-slate-500 mt-1">or click to browse • PNG, JPG, JPEG</p>
+                          <p className="text-sm font-medium text-slate-300">Drop {activeTab === 'settings' ? 'PDF' : 'image'} here</p>
+                          <p className="text-xs text-slate-500 mt-1">or click to browse • {activeTab === 'settings' ? 'PDF' : 'PNG, JPG, JPEG'}</p>
                         </div>
                       </div>
                     </div>
@@ -303,13 +363,15 @@ const AdminDashboard = () => {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*"
+                    accept={activeTab === 'settings' ? "application/pdf" : "image/*"}
                     onChange={(e) => handleImageChange(e.target.files[0])}
                     className="hidden"
                   />
                 </div>
 
-                {/* Title */}
+                {activeTab !== 'settings' && (
+                  <>
+                    {/* Title */}
                 <div>
                   <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Title *</label>
                   <input
@@ -373,6 +435,8 @@ const AdminDashboard = () => {
                     />
                   </div>
                 )}
+                  </>
+                )}
 
                 <button
                   type="submit"
@@ -382,7 +446,7 @@ const AdminDashboard = () => {
                   {loading ? (
                     <><Spinner /> Uploading...</>
                   ) : (
-                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg> Add {currentTab.label.slice(0, -1)}</>
+                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg> {activeTab === 'settings' ? 'Update CV' : `Add ${currentTab.label.slice(0, -1)}`}</>
                   )}
                 </button>
               </form>
@@ -391,6 +455,34 @@ const AdminDashboard = () => {
 
           {/* Items List */}
           <div className="lg:col-span-3">
+            {activeTab === 'settings' ? (
+               <div className="bg-white/3 border border-white/5 rounded-3xl p-8 backdrop-blur-sm">
+                 <h3 className="text-xl font-bold mb-4">Current Settings</h3>
+                 <div className="space-y-4">
+                   <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center justify-between">
+                     <div>
+                       <h4 className="font-semibold text-white mb-1">Resume / CV Link</h4>
+                       <p className="text-xs text-slate-400">
+                         {items.length > 0 && items[0].cvUrl 
+                           ? "A CV is currently uploaded and active." 
+                           : "No CV uploaded yet. Fallback local CV will be used."}
+                       </p>
+                     </div>
+                     {items.length > 0 && items[0].cvUrl && (
+                       <a 
+                         href={items[0].cvUrl.replace('/upload/', '/upload/fl_attachment/')} 
+                         target="_blank" 
+                         rel="noopener noreferrer"
+                         className="flex-shrink-0 px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-400 font-medium text-sm hover:bg-cyan-500/30 transition"
+                       >
+                         Download Current
+                       </a>
+                     )}
+                   </div>
+                 </div>
+               </div>
+            ) : (
+              <>
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-semibold text-base">
                 {currentTab.label}
@@ -487,6 +579,8 @@ const AdminDashboard = () => {
                   </div>
                 ))}
               </div>
+            )}
+            </>
             )}
           </div>
         </div>

@@ -9,6 +9,7 @@ import projectRoutes from './routes/projects.js';
 import certificateRoutes from './routes/certificates.js';
 import courseRoutes from './routes/courses.js';
 import uploadRoutes from './routes/upload.js';
+import settingsRoutes from './routes/settings.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Serve React App in production
 if (process.env.NODE_ENV === 'production') {
