@@ -60,11 +60,9 @@ const Certificates = () => {
     ? certificates
     : certificates.filter(c => c.type === activeFilter);
 
-  if (!loading && certificates.length === 0) return null;
-
   return (
     <section id="certificates" className="py-20 bg-dark relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-8 sm:px-16 lg:px-24">
         <h2 className="text-3xl md:text-5xl font-bold text-center text-white mb-6 uppercase tracking-wider">
           Certificates & Scholarships
         </h2>
@@ -98,7 +96,9 @@ const Certificates = () => {
             <div className="w-8 h-8 border-2 border-neon/30 border-t-neon rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <p className="text-center text-slate-500 py-16">No {activeFilter}s found.</p>
+          <p className="text-center text-slate-500 py-16">
+            No {activeFilter === 'all' ? 'certificates or scholarships' : activeFilter + 's'} found. Add some from the admin dashboard.
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map(cert => (

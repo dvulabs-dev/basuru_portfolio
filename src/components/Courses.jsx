@@ -37,7 +37,7 @@ const Courses = () => {
 
     return (
         <section id="courses" className="py-20 bg-gradient-to-b from-dark to-slate-900">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-8 sm:px-16 lg:px-24">
                 <h2 className="text-3xl md:text-5xl font-bold text-center text-white mb-16 uppercase tracking-wider">
                     Courses
                 </h2>

@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"nodemon backend/server.js\"",
+    "dev:frontend": "vite",
+    "dev:backend": "nodemon backend/server.js",
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"",
     "start": "node backend/server.js",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",

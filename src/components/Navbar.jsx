@@ -47,38 +47,32 @@ const Navbar = () => {
                 <div className="bg-dark/80 backdrop-blur-md border border-white/10 rounded-full px-5 py-3.5 flex items-center justify-between shadow-lg shadow-neon/5">
 
                     {/* Logo */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                        <div className="w-8 h-8 bg-gradient-to-tr from-neon to-blue-600 rounded-lg flex items-center justify-center font-bold text-black text-sm">
-                            B
-                        </div>
-                        <span className="font-bold text-white tracking-wider hidden sm:block text-sm">Basuru Naveen</span>
+                    <div className="flex items-center gap-1 flex-shrink-0 relative group border border-neon/50 px-3 py-1.5 rounded-xl bg-dark/50">
+                        <span className="text-neon font-bold text-lg italic">//</span>
+                        <span className="font-bold text-white tracking-wider hidden sm:block text-base ml-1">basuru<span className="text-slate-400 font-light">Naveen</span></span>
+                        <span className="text-neon font-bold text-lg italic ml-1">//</span>
                     </div>
 
                     {/* Desktop Links */}
-                    <div className="hidden lg:flex items-center gap-6">
+                    <div className="hidden lg:flex items-center gap-6 border border-white/20 rounded-full px-8 py-2.5">
                         {NAV_LINKS.map(link => (
                             <a
                                 key={link.label}
                                 href={link.href}
-                                className="text-slate-300 hover:text-neon transition-colors duration-200 text-sm font-medium"
+                                className="text-slate-300 hover:text-neon transition-colors duration-200 text-xs font-semibold uppercase tracking-wider"
                             >
                                 {link.label}
                             </a>
                         ))}
                     </div>
 
-                    {/* Right side: CV + Hamburger */}
+                    {/* Right side: Contact Button + Hamburger */}
                     <div className="flex items-center gap-3">
                         <a
-                            href={cvUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hidden sm:flex bg-neon text-dark font-bold py-2 px-5 rounded-full hover:bg-cyan-300 transition-all duration-300 text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(0,229,255,0.3)] items-center gap-1.5"
+                            href="#contact"
+                            className="hidden sm:flex bg-neon text-dark font-bold py-2.5 px-6 rounded-full hover:bg-white transition-all duration-300 text-sm tracking-wide shadow-[0_0_15px_rgba(255,204,0,0.3)] items-center"
                         >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                            </svg>
-                            CV
+                            Need Any Solution?
                         </a>
 
                         {/* Hamburger — mobile / tablet */}

@@ -38,7 +38,7 @@ const Projects = () => {
 
     return (
         <section id="projects" className="py-20 bg-gradient-to-b from-dark to-slate-900">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-8 sm:px-16 lg:px-24">
                 <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-20 uppercase tracking-wider">
                     Featured Projects
                 </h2>

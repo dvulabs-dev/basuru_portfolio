@@ -45,7 +45,7 @@ const Contact = () => {
             <div className="absolute -top-32 -left-32 w-72 h-72 bg-neon/5 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-32 -right-32 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div className="max-w-7xl mx-auto px-8 sm:px-16 lg:px-24 relative">
 
                 {/* Heading */}
                 <div className="text-center mb-14">
