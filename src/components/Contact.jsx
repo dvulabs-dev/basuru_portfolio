@@ -35,7 +35,7 @@ const Contact = () => {
         
         try {
             await emailjs.send(
-                'service_ggx1ajs',
+                'service_zxv0lw2',
                 'template_h5dkeri',
                 {
                     to_name: 'Basuru', // You can change this to your actual name
