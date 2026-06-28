@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
 
 const ContactInfo = ({ icon, label, value, href }) => (
     <a
@@ -31,11 +32,30 @@ const Contact = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setStatus('sending');
-        // Simulate send — replace with your EmailJS / backend endpoint
-        await new Promise(res => setTimeout(res, 1500));
-        setStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        setTimeout(() => setStatus(null), 4000);
+        
+        try {
+            await emailjs.send(
+                'service_zxv0lw2',
+                'template_h5dkeri',
+                {
+                    to_name: 'Basuru', // You can change this to your actual name
+                    name: formData.name,
+                    email: formData.email,
+                    message: formData.message,
+                },
+                {
+                    publicKey: 'tsohPrnT_qbeasKIR',
+                }
+            );
+            setStatus('success');
+            setFormData({ name: '', email: '', subject: '', message: '' });
+            setTimeout(() => setStatus(null), 4000);
+        } catch (error) {
+            console.error('Failed to send email:', error, error.text);
+            setStatus('error');
+            alert(`Failed to send the message. Error: ${error.text || error.message || 'Unknown error'}. Please check your Service ID, Template ID, and Public Key.`);
+            setStatus(null);
+        }
     };
 
     return (
